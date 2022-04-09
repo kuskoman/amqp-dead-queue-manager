@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { compare } from 'bcrypt';
 import { CryptoService } from './crypto.service';
@@ -7,7 +8,7 @@ describe(CryptoService.name, () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CryptoService],
+      providers: [CryptoService, { provide: JwtService, useValue: jwtServiceMock }],
     }).compile();
 
     service = module.get<CryptoService>(CryptoService);
@@ -48,4 +49,20 @@ describe(CryptoService.name, () => {
       await expect(service.comparePassword(hash, 'd')).resolves.toBe(false);
     });
   });
+
+  describe('signJwt method', () => {
+    it('should pass arguments to jwtService', async () => {
+      const payloadMock = { a: 'b' };
+      const mockedEncodedPayload = 'a.b.c';
+      jwtServiceMock.signAsync.mockImplementationOnce(async () => mockedEncodedPayload);
+      await expect(service.encodeJwt(payloadMock)).resolves.toBe(mockedEncodedPayload);
+
+      expect(jwtServiceMock.signAsync).toBeCalledTimes(1);
+      expect(jwtServiceMock.signAsync).toBeCalledWith(payloadMock);
+    });
+  });
 });
+
+const jwtServiceMock = {
+  signAsync: jest.fn(),
+};

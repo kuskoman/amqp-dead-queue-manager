@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CryptoService } from '@src/crypto/crypto.service';
 import { UsersService } from '@src/users/users.service';
+import { UserWithoutDigest } from './auth.interfaces';
 import { AuthService } from './auth.service';
 
 describe(AuthService.name, () => {
@@ -63,6 +64,22 @@ describe(AuthService.name, () => {
       expect(cryptoServiceMock.comparePassword).toBeCalledWith(mockedUser.passwordDigest, inputPassword);
     });
   });
+
+  describe('login method', () => {
+    it('should create jwt with user data', async () => {
+      const userMock: UserWithoutDigest = {
+        id: 1,
+        name: 'name',
+      };
+      const jwtMock = 'a.b.c';
+      cryptoServiceMock.encodeJwt.mockImplementationOnce(async () => jwtMock);
+
+      await expect(service.login(userMock)).resolves.toBe(jwtMock);
+
+      expect(cryptoServiceMock.encodeJwt).toBeCalledTimes(1);
+      expect(cryptoServiceMock.encodeJwt).toBeCalledWith({ sub: userMock.id, username: userMock.name });
+    });
+  });
 });
 
 const usersServiceMock = {
@@ -71,4 +88,5 @@ const usersServiceMock = {
 
 const cryptoServiceMock = {
   comparePassword: jest.fn(),
+  encodeJwt: jest.fn(),
 };

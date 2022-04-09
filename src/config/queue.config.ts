@@ -1,5 +1,5 @@
 import { ConfigType, registerAs } from '@nestjs/config';
-import { requireEnv } from 'src/utils/common.utils';
+import { requireEnv } from '@src/utils/common.utils';
 
 export const QUEUE_CONFIG_KEY = 'QUEUE_CONFIG_KEY';
 

@@ -1,37 +1,44 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
-import { CryptoModule } from '@src/crypto/crypto.module';
 import { CryptoService } from '@src/crypto/crypto.service';
 import { DbService } from '@src/db/db.service';
 import { UsersService } from './users.service';
 
 describe(UsersService.name, () => {
   let service: UsersService;
-  let cryptoService: CryptoService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService, { provide: DbService, useValue: prismaMock }],
-      imports: [CryptoModule],
+      providers: [
+        UsersService,
+        { provide: DbService, useValue: prismaMock },
+        { provide: CryptoService, useValue: cryptoServiceMock },
+      ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    cryptoService = module.get<CryptoService>(CryptoService);
   });
 
   afterEach(jest.clearAllMocks);
 
   describe('create method', () => {
     it('should convert password to password digest', async () => {
-      const password = 'password';
-      await service.create({ name: 'michau', password });
+      const hashMock = 'hash';
+      const userMock = { password: 'password', name: 'michau' };
+      cryptoServiceMock.hashPassword.mockImplementationOnce(async () => hashMock);
 
-      const prismaCreateMock = prismaMock.user.create;
-      expect(prismaCreateMock).toBeCalledTimes(1);
-      const prismaCall = prismaCreateMock.mock.calls[0][0];
-      const digest = prismaCall.data.passwordDigest;
+      await service.create(userMock);
 
-      await expect(cryptoService.comparePassword(digest, password)).resolves.toBe(true);
+      expect(prismaMock.user.create).toBeCalledTimes(1);
+      expect(prismaMock.user.create).toBeCalledWith({
+        data: {
+          name: 'michau',
+          passwordDigest: hashMock,
+        },
+      });
+
+      expect(cryptoServiceMock.hashPassword).toBeCalledTimes(1);
+      expect(cryptoServiceMock.hashPassword).toBeCalledWith(userMock.password);
     });
   });
 
@@ -51,4 +58,8 @@ const prismaMock = {
     create: jest.fn(async (_data: Prisma.UserCreateArgs) => ({})),
     findUnique: jest.fn(async () => ({})),
   },
+};
+
+const cryptoServiceMock = {
+  hashPassword: jest.fn(),
 };

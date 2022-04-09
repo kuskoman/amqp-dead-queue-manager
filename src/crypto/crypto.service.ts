@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';
 
 @Injectable()
 export class CryptoService {
+  constructor(private readonly jwtService: JwtService) {}
+
   public async hashPassword(password: string) {
     if (!password) {
       throw new Error("Can't hash empty password");
@@ -13,5 +16,9 @@ export class CryptoService {
 
   public async comparePassword(hash: string, password: string) {
     return await compare(password, hash);
+  }
+
+  public async encodeJwt(payload: Record<string, unknown>): Promise<string> {
+    return await this.jwtService.signAsync(payload);
   }
 }
