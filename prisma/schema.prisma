@@ -8,14 +8,8 @@ datasource db {
 }
 
 model User {
-  id             Int    @id
+  id             Int    @id @default(autoincrement())
   name           String @unique
   passwordDigest String
 }
 
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String
-  expiresAt DateTime
-}
