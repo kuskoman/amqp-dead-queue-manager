@@ -18,7 +18,7 @@ export class CryptoService {
     return await compare(password, hash);
   }
 
-  public async encodeJwt(payload: Record<string, unknown>): Promise<string> {
+  public async encodeJwt(payload: Parameters<JwtService['signAsync']>[0]): Promise<string> {
     return await this.jwtService.signAsync(payload);
   }
 }

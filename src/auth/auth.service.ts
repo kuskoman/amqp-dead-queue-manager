@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CryptoService } from '@src/crypto/crypto.service';
 import { UsersService } from '@src/users/users.service';
-import { UserWithoutDigest } from './auth.interfaces';
+import { UserTokenData, UserWithoutDigest } from './auth.interfaces';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   public async login(user: UserWithoutDigest) {
-    const payload = { username: user.name, sub: user.id };
+    const payload: UserTokenData = { username: user.name, sub: user.id };
     return await this.cryptoService.encodeJwt(payload);
   }
 }
