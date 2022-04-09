@@ -16,6 +16,7 @@ import { BaseConfig, BASE_CONFIG_KEY } from '@src/config/base.config';
           signOptions: { expiresIn: '15m' },
         };
       },
+      inject: [ConfigService],
     }),
   ],
 })
