@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  rabbit:
+    image: 'rabbitmq:3-management'
+    restart: 'unless-stopped'
+    healthcheck:
+      test: "rabbitmqctl eval '\n{ true, rabbit_app_booted_and_running } = { rabbit:is_booted(node()), rabbit_app_booted_and_running },\n{ [], no_alarms } = { rabbit:alarms(), no_alarms },\n[] /= rabbit_networking:active_listeners(),\nrabbitmq_node_is_healthy.\n' || exit 1"
+      interval: '60s'
+      timeout: '10s'
+      retries: 3
+      start_period: '15s'
+    ports:
+      - '${RABBIT_PORT:-5672}:5672'
+      - '${RABBIT_MANAGEMENT_PORT:-15672}:15672'
+    volumes:
+      - 'rabbit_data:/var/lib/rabbitmq'
+
+volumes:
+  rabbit_data:
