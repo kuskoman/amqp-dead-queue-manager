@@ -32,7 +32,7 @@ export class MessagesController {
     const messages = await this.messagesService.findMany({ offset: query.offset || 0, limit: query.limit || 20 });
 
     const executionEnd = process.hrtime.bigint();
-    this.logger.debug(`Getting messages execution time: ${(executionEnd - executionStart) / BigInt(1e6)}ms`);
+    this.logger.debug(`Getting messages execution time: ${Number(executionEnd - executionStart) / 1e6}ms`);
     return messages;
   }
 }
