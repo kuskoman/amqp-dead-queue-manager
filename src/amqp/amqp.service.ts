@@ -18,6 +18,10 @@ export class AmqpService implements OnModuleDestroy {
     return this.connection;
   }
 
+  public isConnected() {
+    return this.connection.isConnected();
+  }
+
   public async onModuleDestroy() {
     this.logger.log('Closing connection');
     await this.connection.close();
@@ -52,7 +56,7 @@ export class AmqpService implements OnModuleDestroy {
 
     if (this.connectionRetryCount === this.maxRetryCount) {
       (async () => {
-        throw new Error(`Could not connect to server after ${this.connectionRetryCount} trues`);
+        throw new Error(`Could not connect to server after ${this.connectionRetryCount} tries`);
       })();
     }
   }

@@ -13,3 +13,9 @@ model User {
   passwordDigest String
 }
 
+model Message {
+  id         Int    @id @default(autoincrement())
+  content    String
+  properties String
+  fields     String
+}
