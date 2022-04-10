@@ -21,10 +21,12 @@ export class DeadQueueService implements OnApplicationBootstrap {
     const connection = this.amqpService.getConnection();
 
     this.deadQueueNames.map((queueName) => {
+      this.logger.log(`Creating channel for queue ${queueName}`);
       connection.createChannel({
         name: `amqp-dead-queue-manager--${queueName}`,
         json: false,
         setup: async (channel: ConfirmChannel) => {
+          this.logger.log(`Starting message consumption for channel assigned to queue ${queueName}`);
           return await channel.consume(queueName, (msg) => this.handleMessage(channel, msg));
         },
       });
@@ -37,6 +39,7 @@ export class DeadQueueService implements OnApplicationBootstrap {
       return;
     }
 
+    this.logger.debug(`Handling received message`);
     const msgBody = Buffer.from(msg.content).toString('utf8');
     const msgFields = JSON.stringify(msg.fields);
     const msgProperties = JSON.stringify(msg.properties);
