@@ -10,6 +10,7 @@ const bootstrap = async () => {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule, {
     logger: new NestTransportLogger({ transports: [new DefaultTransportConsole()] }),
+    cors: true,
   });
   const { port } = app.get<BaseConfig>(baseConfig.KEY);
 

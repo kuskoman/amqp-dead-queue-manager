@@ -26,6 +26,6 @@ export class MessagesController {
   @Get()
   @ApiOkResponse({ type: [MessageResponse] })
   public async findMany(@Param() query: GetManyMessagesDto) {
-    return await this.messagesService.findMany({ offset: query.offset || 0, limit: query.limit || 0 });
+    return await this.messagesService.findMany({ offset: query.offset || 0, limit: query.limit || 20 });
   }
 }
