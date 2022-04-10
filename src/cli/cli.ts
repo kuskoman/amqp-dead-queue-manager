@@ -4,5 +4,3 @@ import { CommandFactory } from 'nest-commander';
 export const bootstrap = async () => {
   await CommandFactory.run(AppModule);
 };
-
-bootstrap();

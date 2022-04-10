@@ -5,10 +5,10 @@ import { UserNameQuestions } from './commands/user-name.questions';
 import { UserPasswordQuestions } from './commands/user-password.questions';
 import { UsersService } from './users.service';
 
-const questions = [UserNameQuestions, UserPasswordQuestions];
+const cliProviders = process.env.CLI === 'true' ? [CreateUserCommand, UserNameQuestions, UserPasswordQuestions] : [];
 
 @Module({
-  providers: [UsersService, CreateUserCommand, ...questions],
+  providers: [UsersService, ...cliProviders],
   exports: [UsersService],
   imports: [CryptoModule],
 })

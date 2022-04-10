@@ -22,6 +22,16 @@ describe(UsersService.name, () => {
   afterEach(jest.clearAllMocks);
 
   describe('create method', () => {
+    it('should throw an error when user input is invalid', async () => {
+      const invalidUserMock = { name: 'paweu', password: 'a' };
+      await expect(service.create(invalidUserMock)).rejects.toThrow();
+    });
+
+    it('should not throw when user input matches requirements', async () => {
+      const validUserMock = { name: 'paweu', password: 'asdblsjadvwoubfwr!@#E13ea' };
+      await expect(service.create(validUserMock)).resolves.not.toThrow();
+    });
+
     it('should convert password to password digest', async () => {
       const hashMock = 'hash';
       const userMock = { password: 'password', name: 'michau' };
@@ -61,5 +71,5 @@ const prismaMock = {
 };
 
 const cryptoServiceMock = {
-  hashPassword: jest.fn(),
+  hashPassword: jest.fn(async () => '$a$bc'),
 };
