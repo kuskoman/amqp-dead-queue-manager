@@ -1,0 +1,14 @@
+.app-footer {
+  position: absolute;
+  width: 100%;
+  margin-top: 24px;
+  height: 64px;
+}
+
+.main-content-wrapper {
+  min-height: calc(100vh - 2 * 64px - 24px);
+}
+
+.footer-text {
+  margin: 0 auto;
+}
